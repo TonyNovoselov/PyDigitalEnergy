@@ -1,4 +1,7 @@
 import requests
+import logging
+
+logging.basicConfig(level=logging.CRITICAL)
 
 from unittest import TestCase, mock
 from requests.exceptions import RequestException
@@ -8,9 +11,16 @@ from pydigitalenergy.exceptions import DigitalEnergyApiException
 
 
 class TestRestAdapter(TestCase):
+
+    required_test_settings = {
+        'hostname': 'localhost',
+        'client_id': 'test',
+        'client_secret': 'test',
+        'token': 'test-jwt-key',
+    } 
+
     def setUp(self) -> None:
-        # To do: create mock adapter
-        self.rest_adapter = RestAdapter()
+        self.rest_adapter = RestAdapter(**self.required_test_settings)
         self.response = requests.Response()
 
     def test__make_request_good_request_returns_result(self):
@@ -26,8 +36,7 @@ class TestRestAdapter(TestCase):
                 self.rest_adapter._make_request('GET', '')
 
     def test__make_request_bad_json_raises_digitalenergyapi_exception(self):
-        bad_json = '{"some bad json": '
-        self.response._content = bad_json
+        self.response._content = '{"some bad json": '
         with mock.patch('requests.request', return_value=self.response):
             with self.assertRaises(DigitalEnergyApiException):
                 self.rest_adapter._make_request('GET', '')
@@ -50,10 +59,3 @@ class TestRestAdapter(TestCase):
         with mock.patch('requests.request', return_value=self.response) as request:
             self.rest_adapter.get('')
             self.assertTrue(request.method, 'GET')
-
-    def test_post_method_passes_in_post(self):
-        self.response.status_code = 200
-        self.response._content = '{}'.encode()
-        with mock.patch('requests.request', return_value=self.response) as request:
-            self.rest_adapter.post('')
-            self.assertTrue(request.method, 'POST')

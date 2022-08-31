@@ -5,7 +5,7 @@ from pydigitalenergy.system.actors import System
 
 
 class DigitalEnergyApi:
-    def __init__(self, hostname: str, client_id: str, client_secret: str, auth_version: str = 'v1', auth_validity: int = 3600, ssl_verify: bool = True, logger: Logger = None):
+    def __init__(self, hostname: str, client_id: str, client_secret: str, auth_version: str = 'v1', auth_validity: int = 3600, ssl_verify: bool = True, logger: Logger = None, token: str = ''):
         """
         The DigitalEnergyApi class provides convenient access to Digital Energy's API
 
@@ -18,16 +18,16 @@ class DigitalEnergyApi:
         :param auth_version: 
             Auth version, default v1
         :param auth_validity: 
-            Lifetime of JWT in seconds, default 3600 seconds or 1 hour
+            Lifetime of JWT-key in seconds, default 3600 seconds or 1 hour
         :param ssl_verify: 
             Normally set to True, but if having SSL/TLS cert validation issues, can turn off with False
         :param logger: (optional)
-            If your app has a logger, pass it in here.
+            If your app has a logger, pass it in here
+        :param token: (optional)
+            Your JWT-key to work with API, if not specified will be generated automatically
         """
-        self._adapter = RestAdapter(hostname, client_id, client_secret, auth_version, auth_validity, ssl_verify, logger)
+        self._adapter = RestAdapter(hostname, client_id, client_secret, auth_version, auth_validity, ssl_verify, logger, token)
         self._logger = logger
-
-        
         
         # Following actors are RESTfull API interfaces that are used to run backend tasks
         self.cloudapi = None
