@@ -8,7 +8,7 @@ from pydigitalenergy.models import Result
 
 
 class RestAdapter:
-    def __init__(self, hostname: str, client_id: str, client_secret: str, auth_version: str = 'v1', auth_validity: int = 3600, ssl_verify: bool = True, logger: logging.Logger = None):
+    def __init__(self, hostname: str, client_id: str, client_secret: str, auth_version: str = 'v1', auth_validity: int = 3600, ssl_verify: bool = True, logger: logging.Logger = None, token: str = ''):
         """
         Constructor for RestAdapter
 
@@ -21,11 +21,13 @@ class RestAdapter:
         :param auth_version: 
             Auth version, default v1
         :param auth_validity: 
-            Lifetime of JWT in seconds, default 3600 seconds or 1 hour
+            Lifetime of JWT-key in seconds, default 3600 seconds or 1 hour
         :param ssl_verify: 
             Normally set to True, but if having SSL/TLS cert validation issues, can turn off with False
         :param logger: (optional)
-            If your app has a logger, pass it in here.
+            If your app has a logger, pass it in here
+        :param token: (optional)
+            Your JWT-key to work with API, if not specified will be generated automatically
         """
         if not ssl_verify:
             requests.packages.urllib3.disable_warnings()
@@ -36,16 +38,19 @@ class RestAdapter:
         self._client_secret = client_secret
         self._ssl_verify = ssl_verify
         self._logger = logger or logging.getLogger(__name__)
-        self._set_token(auth_version, auth_validity)
+        self._token = token if token else self._get_new_token(auth_version, auth_validity)
 
-    def _set_token(self, auth_version: str = 'v1', auth_validity: int = 3600) -> str:
+    def _get_new_token(self, auth_version: str = 'v1', auth_validity: int = 3600) -> str:
         """
-        Private method for setting JSON Web Token (JWT)
+        Private method for getting new JSON Web Token (JWT)
 
         :param auth_version: 
             Auth version, default v1
         :param auth_validity: 
             Lifetime of JWT in seconds, default 3600 seconds or 1 hour
+        
+        :return: 
+            Token string
         """
         auth_params = {
             'client_id': self._client_id,
@@ -64,9 +69,9 @@ class RestAdapter:
             response = requests.post(url=auth_url, verify=self._ssl_verify, params=auth_params)
         except requests.exceptions.RequestException as e:
             self._logger.error(msg=(str(e)))
-            raise DigitalEnergyApiException('Request JWT failed') from e
+            raise DigitalEnergyApiException('Request new JWT failed') from e
 
-        # If status_code not in 200-299 range raise exception, otherwise set JWT
+        # If status_code not in 200-299 range raise exception, otherwise return new JWT
         is_success = 299 >= response.status_code >= 200
         log_line = log_line_post.format(is_success, response.status_code, response.reason)
 
@@ -75,7 +80,7 @@ class RestAdapter:
             raise DigitalEnergyApiException(f'{response.status_code}: {response.reason}')
 
         self._logger.debug(msg=log_line)
-        self._jwt = response.content.decode('utf8')
+        return response.content.decode('utf8')
 
     def _make_request(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
         """
@@ -95,7 +100,7 @@ class RestAdapter:
         """
         headers = {
             'accept': 'application/json',
-            'Authorization': f'bearer {self._jwt}',
+            'Authorization': f'bearer {self._token}',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         full_url = self.url + endpoint
