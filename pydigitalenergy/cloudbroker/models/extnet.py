@@ -30,7 +30,7 @@ class VNFs:
 
 
 class ExternalNetwork:
-    def __init__(self, id: int, gid: int, name: str, status: str, ipcidr: str, gateway: str, network: str, networkId: int, checkIps: Optional[List[str]] = [], default: Optional[bool] = None, defaultQos: Optional[Union[DefaultQos, dict]] = None, desc: Optional[str] = '', dns: Optional[List[Any]] = [], excluded: Optional[List[Any]] = [], free_ips: Optional[int] = None, guid: Optional[int] = None, milestones: Optional[int] = None, preReservationsNum: Optional[int] = None, prefix: Optional[int] = None, priVnfDevId: Optional[int] = None, reservations: Optional[List[Reservation]] = [], sharedWith: Optional[List[Any]] = [], vlanId: Optional[int] = None, vnfs: Optional[Union[VNFs, dict]] = None, _ckey: Optional[str] = '', _meta: Optional[List[Union[int, str]]] = [], **kwargs):
+    def __init__(self, id: int, gid: int, name: str, status: str, ipcidr: str, gateway: str = '', network: str = '', networkId: int = None, checkIps: Optional[List[str]] = [], default: Optional[bool] = None, defaultQos: Optional[Union[DefaultQos, dict]] = None, desc: Optional[str] = '', dns: Optional[List[Any]] = [], excluded: Optional[List[Any]] = [], free_ips: Optional[int] = None, guid: Optional[int] = None, milestones: Optional[int] = None, preReservationsNum: Optional[int] = None, prefix: Optional[int] = None, priVnfDevId: Optional[int] = None, reservations: Optional[List[Reservation]] = [], sharedWith: Optional[List[Any]] = [], vlanId: Optional[int] = None, vnfs: Optional[Union[VNFs, dict]] = None, _ckey: Optional[str] = '', _meta: Optional[List[Union[int, str]]] = [], **kwargs):
         self.id = id
         self.gid = gid
         self.name = name
