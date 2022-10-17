@@ -1,7 +1,8 @@
 from logging import Logger
 from pydigitalenergy.adapter import RestAdapter
-from pydigitalenergy.cloudbroker.actors import Cloudbroker
 from pydigitalenergy.system.actors import System
+from pydigitalenergy.cloudapi.actors import Cloudapi
+from pydigitalenergy.cloudbroker.actors import Cloudbroker
 
 
 class DigitalEnergyApi:
@@ -30,7 +31,7 @@ class DigitalEnergyApi:
         self._logger = logger
         
         # Following actors are RESTfull API interfaces that are used to run backend tasks
-        self.cloudapi = None
-        self.cloudbroker = Cloudbroker(self._adapter)
-        self.libcloud = None
         self.system = System(self._adapter)
+        # self.cloudapi = Cloudapi(self._adapter)
+        self.cloudbroker = Cloudbroker(self._adapter)
+        # self.libcloud = None
