@@ -24,8 +24,7 @@ class GridGroup(BaseGroup):
         :return: 
             List of Grid objects
         """
-        endpoint = API_PATH['grid_list']
-        result = self._adapter.get(endpoint)
+        result = self._get_data(API_PATH['grid_list'], method='GET')
         return [models.Grid(**grid) for grid in result.data]
 
     def get(self, grid_id: int) -> models.Grid:

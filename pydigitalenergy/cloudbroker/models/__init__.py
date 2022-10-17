@@ -6,3 +6,6 @@ from .sep import StorageEndpoint, StorageConfig, StoragePool
 from .image import Image
 from .disk import Disk
 from .extnet import ExternalNetwork
+from .cluster import Cluster
+from .host import Host
+from .vm import VM

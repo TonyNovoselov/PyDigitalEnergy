@@ -1,16 +1,17 @@
 from typing import Optional, List, Dict, Union, Any
+from pydigitalenergy.models import Extra
 
 
 class DiskDelQueue:
     def __init__(self, purge_attempts_threshold: Optional[int] = None, **kwargs):
         self.purge_attempts_threshold = purge_attempts_threshold
-        self.__dict__.update(kwargs)
+        self.extra = Extra(kwargs)
 
 
 class HousekeepingSettings:
     def __init__(self, disk_del_queue: Optional[Union[DiskDelQueue, dict]] = None, **kwargs):
         self.disk_del_queue = DiskDelQueue(**disk_del_queue) if isinstance(disk_del_queue, dict) else disk_del_queue
-        self.__dict__.update(kwargs)
+        self.extra = Extra(kwargs)
 
 
 class StoragePool:
@@ -24,7 +25,7 @@ class StoragePool:
         self.snapshotable = snapshotable
         self.types = types
         self.usage_limit = usage_limit
-        self.__dict__.update(kwargs)
+        self.extra = Extra(kwargs)
 
 
 class StorageConfig:
@@ -46,15 +47,15 @@ class StorageConfig:
         self.name_prefix = name_prefix
         self.pools = [] if not pools else [StoragePool(**pool) for pool in pools]
         self.ports = ports
-        self.__dict__.update(kwargs)
+        self.extra = Extra(kwargs)
 
 
 class StorageEndpoint:
-    def __init__(self, id: int, gid: int, name: str, desc: str, type: str, objStatus: str, techStatus: str, config: Optional[Union[StorageConfig, dict]] = None, consumedBy: Optional[List[int]] = [], guid: Optional[int] = None, milestones: Optional[int] = None, providedBy: Optional[List[Any]] = [], _ckey: Optional[str] = '', _meta: Optional[List[Union[int, str]]] = [], **kwargs):
+    def __init__(self, id: int, gid: int, name: str, desc: str, type: str, objStatus: str, techStatus: str, config: Optional[Union[StorageConfig, dict]] = None, consumedBy: Optional[List[int]] = [], guid: Optional[int] = None, milestones: Optional[int] = None, providedBy: Optional[List[Any]] = [], **kwargs):
         self.id = id
-        self.gid = gid
+        self.grid_id = gid
         self.name = name
-        self.desc = desc
+        self.description = desc
         self.type = type
         self.obj_status = objStatus
         self.tech_status = techStatus
@@ -63,6 +64,4 @@ class StorageEndpoint:
         self.guid = guid
         self.milestones = milestones
         self.provided_by = providedBy
-        self._ckey = _ckey
-        self._meta = _meta
-        self.__dict__.update(kwargs)
+        self.extra = Extra(kwargs)

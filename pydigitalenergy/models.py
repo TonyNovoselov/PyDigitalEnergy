@@ -18,3 +18,14 @@ class Result:
         self.headers = headers
         self.message = str(message)
         self.data = data if data else []
+
+
+class Extra:
+    def __init__(self, kwargs):
+        """
+        Extra fields for the strong models
+        
+        :param kwargs: 
+            Dictionary with additional information
+        """
+        self.__dict__.update(kwargs)
